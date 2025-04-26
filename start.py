@@ -22,12 +22,14 @@ if __name__ == '__main__':
         print('python3 start.py app_name')
         sys.exit()
 
-    app_name = 'random3'
+    app_name = 'random10'
 
     app_factory = factory()
     app_factory.register('turek', turek)
     app_factory.register('array', array)
     app_factory.register('random3', random3)
+    app_factory.register('random10', random10)
+
 
     # Instanciate app
     app = app_factory.create(app_name)
