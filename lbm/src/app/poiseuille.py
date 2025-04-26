@@ -95,17 +95,12 @@ class poiseuille(base_app):
         lattice.zou_he_top_right_corner()
         lattice.zou_he_bottom_right_corner()
 
-    ### Write outputs
     def outputs(self, lattice, it):
+            if (it % self.output_freq != 0):
+                return
+            print(f"[Output] Iteration {it}")
+            print(f"Lattice velocity norm = {np.linalg.norm(lattice.u)} at iteration {it}")
 
-        # Check iteration
-        if (it%self.output_freq != 0): return
-
-        # Output field
-        plot_norm(lattice, 0.0, 1.5, self.output_it, self.dpi)
-
-        # Increment plotting counter
-        self.output_it += 1
 
     ### Finalize
     def finalize(self, lattice):
