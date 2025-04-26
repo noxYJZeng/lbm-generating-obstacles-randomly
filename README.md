@@ -33,7 +33,7 @@ python3 start.py <application_name>
 Simulation results (including .npz files and images) will be saved automatically under ./results/<timestamp>/.
 
 
-##  Sample Simulation
+##  Credits
 
 Below is a sample result showing randomly generated obstacles and flow behavior:
 
