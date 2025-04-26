@@ -22,8 +22,6 @@ While the original version supported basic flows like lid-driven cavity and Ture
 - **Cooldown-based Target Spawning**  
   Targets now respect a cooldown period after deactivation, preventing immediate reuse and avoiding rendering artifacts.
 
-- **Fully Modular Application System**  
-  New simulation types can easily be added by creating new apps and registering them in the app factory (`lbm/src/app/app.py`).
 
 
 ## Running Simulations
