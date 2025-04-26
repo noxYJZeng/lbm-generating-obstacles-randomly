@@ -3,6 +3,8 @@ import os
 import math
 import numpy                 as np
 from   datetime              import datetime
+import imageio.v3 as imageio
+
 
 # Custom imports
 from   lbm.src.utils.buff    import *
@@ -15,7 +17,7 @@ from   lbm.src.plot.plot     import *
 class lattice:
     ### ************************************************
     ### Constructor
-    def __init__(self, app):
+    def __init__(self, app, base_output_dir=None):
 
         # Set default values
         self.name      = 'lattice'
@@ -25,7 +27,7 @@ class lattice:
         self.y_max     = 1.0
         self.nx        = 100
         self.ny        = 100
-        self.tau_lbm   = 1.0
+        self.tau_lbm   = 1.0 #松弛时间，决定流体的黏性和数值稳定性
         self.dx        = 1.0
         self.dt        = 1.0
         self.Cx        = self.dx
@@ -78,18 +80,13 @@ class lattice:
         if hasattr(app, "obs_cv_nb"): self.obs_cv_nb = app.obs_cv_nb
 
         # Output dirs
-        time             = datetime.now().strftime('%Y-%m-%d_%H_%M_%S')
-        self.results_dir = './results/'
-        self.output_dir  = self.results_dir+str(time)+'/'
-        self.png_dir     = self.output_dir+'./png/'
+        if base_output_dir is None:
+            time = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+            self.output_dir = os.path.join('./results', time)
+        else:
+            self.output_dir = base_output_dir
 
-        if (not os.path.exists(self.results_dir)):
-            os.makedirs(self.results_dir, exist_ok=True)
-        if (not os.path.exists(self.output_dir)):
-            os.makedirs(self.output_dir,  exist_ok=True)
-        if (not os.path.exists(self.png_dir)):
-            os.makedirs(self.png_dir,     exist_ok=True)
-
+        os.makedirs(self.output_dir, exist_ok=True)
         # Default LBM parameters and fields
         self.set_default_lbm()
 
@@ -416,21 +413,15 @@ class lattice:
     ### ************************************************
     ### Generate lattice image
     def generate_image(self, obstacles):
+        lat = self.lattice.copy().astype(float)
 
-        # Add obstacle border
-        lat = self.lattice.copy()
-        lat = lat.astype(float)
+        for obs in obstacles:
+            for k in range(len(obs.boundary)):
+                i = obs.boundary[k, 0]
+                j = obs.boundary[k, 1]
+                lat[i, j] = -1.0
 
-        for obs in range(len(obstacles)):
-            for k in range(len(obstacles[obs].boundary)):
-                i = obstacles[obs].boundary[k,0]
-                j = obstacles[obs].boundary[k,1]
-                lat[i,j] = -1.0
+        filename = os.path.join(self.output_dir, f"{self.name}_lattice_map.png")
+        plt.imsave(filename, np.rot90(lat), vmin=-1.0, vmax=1.0)
+        print(f"[Saved lattice map] {filename}")
 
-        # Plot and save image of lattice
-        filename = self.output_dir+self.name+'.png'
-
-        plt.imsave(filename,
-                   np.rot90(lat),
-                   vmin=-1.0,
-                   vmax= 1.0)

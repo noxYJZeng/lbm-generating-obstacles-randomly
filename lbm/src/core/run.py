@@ -5,6 +5,7 @@ import time
 # Custom imports
 from lbm.src.app.app      import *
 from lbm.src.core.lattice import *
+from lbm.src.core.save_utils import save_simulation
 
 ########################
 # Run lbm simulation
@@ -13,6 +14,8 @@ def run(lattice, app):
 
     # Initialize fields and distributions
     app.initialize(lattice)
+
+    base_output_dir = lattice.output_dir
 
     # Timer and loop data
     start_time = time.time()
@@ -34,6 +37,10 @@ def run(lattice, app):
 
         # Output field
         app.outputs(lattice, it)
+
+        # Save field
+        if it % app.output_freq == 0:
+            save_simulation(lattice, app.obstacles, it, base_output_dir, app.dx, app.dy, dpi=app.dpi)
 
         # Compute equilibrium state
         lattice.equilibrium()
@@ -59,4 +66,3 @@ def run(lattice, app):
 
     # Perform final operations and outputs
     app.finalize(lattice)
-

@@ -26,7 +26,7 @@ def plot_norm(lattice, val_min, val_max, output_it, dpi):
                vmax = val_max*lattice.u_lbm,
                interpolation = 'spline16')
 
-    filename = lattice.png_dir+'u_norm_'+str(output_it)+'.png'
+    filename = os.path.join(lattice.norm_img_dir, f'u_norm_{output_it:04d}.png')
     plt.axis('off')
     plt.savefig(filename, dpi=dpi)
     plt.close()
@@ -35,12 +35,7 @@ def plot_norm(lattice, val_min, val_max, output_it, dpi):
 ### Output 2D flow contour
 def plot_contour(lattice, output_it, dpi):
 
-    # Plot
-    plt.clf()
-    fig, ax = plt.subplots(figsize=plt.figaspect(vm))
-    fig.subplots_adjust(0,0,1,1)
-    x  = np.linspace(0, 1, lattice.nx)
-    y  = np.linspace(0, 1, lattice.ny)
+
     ux = lattice.u[0,:,:].copy()
     uy = lattice.u[1,:,:].copy()
     uy = np.rot90(uy)
@@ -48,9 +43,16 @@ def plot_contour(lattice, output_it, dpi):
     uy = np.flipud(uy)
     ux = np.flipud(ux)
     vm = np.sqrt(ux**2+uy**2)
+
+    # Plot
+    plt.clf()
+    fig, ax = plt.subplots(figsize=plt.figaspect(vm))
+    fig.subplots_adjust(0,0,1,1)
+    x  = np.linspace(0, 1, lattice.nx)
+    y  = np.linspace(0, 1, lattice.ny)
     plt.contour(x, y, vm, cmap='RdBu_r',
                 vmin=0.0, vmax=1.5*lattice.u_lbm)
-    filename = lattice.png_dir+'u_ctr_'+str(output_it)+'.png'
+    filename = lattice.contour_img_dir +'u_ctr_'+str(output_it)+'.png'
     plt.axis('off')
     plt.savefig(filename, dpi=dpi)
     plt.close()
@@ -60,9 +62,7 @@ def plot_contour(lattice, output_it, dpi):
 def plot_streamlines(lattice, dpi):
 
     # The outputted streamplot is rotated and flipped...
-    plt.clf()
-    fig, ax = plt.subplots(figsize=plt.figaspect(vm))
-    fig.subplots_adjust(0,0,1,1)
+
     ux = lattice.u[0,:,:].copy()
     uy = lattice.u[1,:,:].copy()
     uy = np.rot90(uy)
@@ -71,6 +71,10 @@ def plot_streamlines(lattice, dpi):
     ux = np.flipud(ux)
     vm = np.sqrt(ux**2+uy**2)
     vm = np.rot90(vm)
+
+    plt.clf()
+    fig, ax = plt.subplots(figsize=plt.figaspect(vm))
+    fig.subplots_adjust(0,0,1,1)
     x  = np.linspace(0, 1, lattice.nx)
     y  = np.linspace(0, 1, lattice.ny)
     nn = 20

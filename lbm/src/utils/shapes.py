@@ -36,7 +36,6 @@ class shape:
         self.edgy           = edgy
         self.output_dir     = output_dir
 
-        if (not os.path.exists(self.output_dir)): os.makedirs(self.output_dir)
 
     ### ************************************************
     ### Reset object
@@ -165,7 +164,7 @@ class shape:
                     alpha=0.5)
 
         # Save image
-        filename = self.output_dir+self.name+'.png'
+        filename = os.path.join(self.output_dir, self.name + '.png')
 
         plt.savefig(filename,
                     dpi=200)
@@ -176,7 +175,7 @@ class shape:
     ### ************************************************
     ### Write csv
     def write_csv(self):
-        filename = self.output_dir+self.name+'.csv'
+        filename = os.path.join(self.output_dir, self.name + '.csv')
         with open(filename,'w') as file:
             # Write header
             file.write('{} {}\n'.format(self.n_control_pts,
@@ -268,6 +267,36 @@ def generate_cylinder_pts(n_pts):
                     0.5*math.sin(float(i)*ang)]
 
     return pts
+
+### ************************************************
+### Generate prism1 points正
+def generate_prism1_pts(n_pts):
+  if (n_pts != 3):
+      print('You should have n_pts = 3 for a triangular prism1')
+      exit()
+
+  pts = np.zeros([n_pts, 2])
+  pts[0,:] = [0.0, 0.0]
+  pts[1,:] = [1.0, 0.0]
+  pts[2,:] = [0.5, 1.0]
+
+  pts[:,:] *= 0.5
+  return pts
+
+### ************************************************
+### Generate prism2 points反
+def generate_prism2_pts(n_pts):
+  if (n_pts != 3):
+      print('You should have n_pts = 3 for a triangular prism2')
+      exit()
+
+  pts = np.zeros([n_pts, 2])
+  pts[0,:] = [0.0, 0.0]
+  pts[1,:] = [1.0, 0.0]
+  pts[2,:] = [0.5, -1.0]
+
+  pts[:,:] *= 0.5
+  return pts
 
 ### ************************************************
 ### Generate square points
@@ -412,6 +441,7 @@ def trim_white(filename):
     cp   = im.crop(bbox)
     cp.save(filename)
 
+
 ### ************************************************
 ### Generate shape
 def generate_shape(n_pts,
@@ -420,12 +450,15 @@ def generate_shape(n_pts,
                    shape_size,
                    shape_name,
                    n_sampling_pts,
-                   output_dir):
+                   base_output_dir):
     # Check input
-    if (shape_type not in ['cylinder','square','random']):
+    if (shape_type not in ['cylinder','square','prism1', 'prism2','random']):
         print('Error in shape_type')
-        print('Authorized values are "cylinder", "square" and "random"')
+        print('Authorized values are "cylinder", "prism","square" and "random"')
         exit()
+
+    shape_folder = base_output_dir
+
 
     # Select shape type
     if (shape_type == 'cylinder'):
@@ -438,6 +471,18 @@ def generate_shape(n_pts,
         radius         = np.zeros((n_pts))
         edgy           = np.ones((n_pts))
         ctrl_pts       = generate_square_pts(n_pts)
+        ctrl_pts[:,:] *= shape_size
+
+    if (shape_type == 'prism1'):
+        radius         = np.zeros((n_pts))
+        edgy           = np.ones((n_pts))
+        ctrl_pts       = generate_prism1_pts(n_pts)
+        ctrl_pts[:,:] *= shape_size
+
+    if (shape_type == 'prism2'):
+        radius         = np.zeros((n_pts))
+        edgy           = np.ones((n_pts))
+        ctrl_pts       = generate_prism2_pts(n_pts)
         ctrl_pts[:,:] *= shape_size
 
     if (shape_type == 'random'):
@@ -454,7 +499,7 @@ def generate_shape(n_pts,
               n_sampling_pts,
               radius,
               edgy,
-              output_dir)
+              shape_folder)
 
     s.build()
     s.generate_image(xmin =-shape_size,
