@@ -4,7 +4,6 @@ This project builds upon a basic 2D Lattice-Boltzmann Method (LBM) solver based 
 
 While the original version supported basic flows like lid-driven cavity and Turek benchmarks, this extended version introduces several new **features** and **enhancements** for flexibility, usability, and application expansion.
 
----
 
 ## New Features
 
@@ -27,8 +26,6 @@ While the original version supported basic flows like lid-driven cavity and Ture
   New simulation types can easily be added by creating new apps and registering them in the app factory (`lbm/src/app/app.py`).
 
 
----
-
 ## Running Simulations
 
 To run a simulation:
@@ -37,7 +34,6 @@ python3 start.py <application_name>
 ```
 Simulation results (including .npz files and images) will be saved automatically under ./results/<timestamp>/.
 
----
 
 ##  Sample Simulation
 
@@ -45,7 +41,6 @@ Below is a sample result showing randomly generated obstacles and flow behavior:
 
 <p align="center"> <img src="lbm/save/random10.gif" width="600" alt="Random Obstacles Simulation GIF"> </p>
 
----
 
 ##  Sample Simulation
 
