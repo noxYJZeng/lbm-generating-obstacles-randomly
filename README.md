@@ -49,5 +49,6 @@ Below is a sample result showing randomly generated obstacles and flow behavior:
 
 ##  Sample Simulation
 
-Original base project by jviquerat.
+Original base project by [jviquerat](https://github.com/jviquerat/lbm). 
+
 Extensions and improvements by noxYJZeng.
