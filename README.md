@@ -44,4 +44,4 @@ Below is a sample result showing randomly generated obstacles and flow behavior:
 
 Original base project by [jviquerat](https://github.com/jviquerat/lbm). 
 
-Extensions and improvements by noxYJZeng.
+Extensions and improvements by [noxYJZeng](https://github.com/noxYJZeng/lbm-generating-obstacles-randomly).
