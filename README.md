@@ -33,14 +33,14 @@ python3 start.py <application_name>
 Simulation results (including .npz files and images) will be saved automatically under ./results/<timestamp>/.
 
 
-##  Credits
+## Sample Simulation
 
 Below is a sample result showing randomly generated obstacles and flow behavior:
 
 <p align="center"> <img src="lbm/save/random10.gif" width="600" alt="Random Obstacles Simulation GIF"> </p>
 
 
-##  Sample Simulation
+## Credits
 
 Original base project by [jviquerat](https://github.com/jviquerat/lbm). 
 
