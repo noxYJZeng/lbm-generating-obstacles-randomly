@@ -1,74 +1,53 @@
-# lbm
+# lbm – randomly generating obstacles
 
-![master badge](https://github.com/jviquerat/lbm/workflows/lbm/badge.svg?branch=master)
+This project builds upon a basic 2D Lattice-Boltzmann Method (LBM) solver based on D2Q9 lattice and TRT collision.
 
-A simple lattice-Boltzmann code for 2D flow resolutions.
+While the original version supported basic flows like lid-driven cavity and Turek benchmarks, this extended version introduces several new **features** and **enhancements** for flexibility, usability, and application expansion.
 
-<p align="center">
-  <img width="800" alt="" src="lbm/save/header.gif">
-</p>
+---
 
-## Contents
+## New Features
 
-This LBM code includes:
+- **New Obstacles Types**  
+  Added prism1 and prism2 as new obstacle types.
 
-- D2Q9 lattice
-- TRT collision operator
-- Zou-He on all boundary conditions
-- Drag/lift computation using interpolated bounce-back
-- Core routines are deferred to Numba
+- **Randomized Obstacles Generation**  
+  Added `random10` `random3`application that dynamically generates random obstacles for each simulation. This enables diverse dataset creation and generalization testing.
 
-## Running simulations
+- **Automatic Output Management**  
+  All simulation outputs (including `.npz` data and generated images) are automatically saved under a timestamped results folder in `./results/`. The npz files include density, velocity of the flow and lattice map of obstacles. They can be used for Latnet model training.
 
-Cases are described in the `lbm/src/app/` repository. To run a simulation, adjust the parameters in the related python file, then run `python3 start.py <app_name>`. A results folder will be generated in `./results/` with the current date and time. If you wish to add a new application, you must create a new app, and register it in the factory, located in `lbm/src/app/app.py`. Below are some examples and benchmarks that were ran with the code. The related cases are available in the repository. The computational times are obtained on a standard laptop.
+- **Improved Target Behavior**  
+  Fixed target (obstacle) rendering bugs to ensure no unexpected flashes or "teleporting" effects when targets are recycled at domain boundaries.
 
-## Benchmarks
+- **Cooldown-based Target Spawning**  
+  Targets now respect a cooldown period after deactivation, preventing immediate reuse and avoiding rendering artifacts.
 
-### Lid-driven cavity
+- **Fully Modular Application System**  
+  New simulation types can easily be added by creating new apps and registering them in the app factory (`lbm/src/app/app.py`).
 
-A simple driven cavity in unit square. Below are the computed time-domain velocity norms at `Re=100` (left) and `Re=1000` (right).
 
-<p align="center">
-  <img width="300" alt="" src="lbm/save/driven_cavity/re_100_nx_200/anim-opt.gif"> <img width="300" alt="" src="lbm/save/driven_cavity/re_1000_nx_250/anim-opt.gif">
-</p>
+---
 
-A comparison of `u = f(y)` and `v = f(x)` at the center of the domain with reference data from <a href="https://www.sciencedirect.com/science/article/pii/0021999182900584">"U. Ghia, K. N. Ghia, C. T. Shin, *High-Re solutions for incompressible flow using Navier-Stokes equations and multigrid method*"</a>.
+## Running Simulations
 
-<p align="center">
-  <img width="300" alt="" src="lbm/save/driven_cavity/re_100_nx_200/re_100.png"> <img width="300" alt="" src="lbm/save/driven_cavity/re_1000_nx_250/re_1000.png">
-</p>
+To run a simulation:
+```bash
+python3 start.py <application_name>
+```
+Simulation results (including .npz files and images) will be saved automatically under ./results/<timestamp>/.
 
-### Turek benchmark
+---
 
-The Turek cylinder benchmark CFD case is described in <a href="https://link.springer.com/chapter/10.1007/978-3-322-89849-4_39">"Schafer, M., Turek, S. *Benchmark Computations of Laminar Flow Around a Cylinder*"</a>. Here, we explore the accuracy of the drag and lift computation (using IBB). Note that for the 2D-2 case, the values correspond to the max drag and lift.
+##  Sample Simulation
 
-|        |`ny` | 2D-1 (Re=20) Cd, Cl, CPU   | 2D-2 (Re=100) Cd, Cl, CPU  |
-|--------|-----|----------------------------|----------------------------|
-| Turek  | --- |  5.5800 - 0.0107 - N/A     |  3.2300 - 1.0000 - N/A     |
-| lbm    | 100 |  5.7111 - 0.0285 - 236 s.  |  3.5409 - 1.0696 - 518 s.  |
-| lbm    | 200 |  5.6250 - 0.0212 - 1367 s. |  3.2959 - 1.0253 - 2762 s. |
+Below is a sample result showing randomly generated obstacles and flow behavior:
 
-Below is a video of the 2D-2 case:
+<p align="center"> <img src="lbm/save/random10.gif" width="600" alt="Random Obstacles Simulation GIF"> </p>
 
-<p align="center">
-  <img width="800" alt="" src="lbm/save/turek/re_100_ny_200/turek.gif">
-</p>
+---
 
-## Applications
+##  Sample Simulation
 
-### Array of obstacles
-
-An array of square obstacles at `Re=2000`, with `ny=200`. This computation took approx 20 minutes on my laptop, although the accuracy here is questionable.
-
-<p align="center">
-  <img width="800" alt="" src="lbm/save/array/array.gif">
-</p>
-
-### Double step in channel
-
-Two steps in a channel at `Re=500`, with `ny=150`. This computation took approx 15 minutes on my laptop.
-
-<p align="center">
-  <img width="800" alt="" src="lbm/save/step/step.gif">
-</p>
-
+Original base project by jviquerat.
+Extensions and improvements by noxYJZeng.
