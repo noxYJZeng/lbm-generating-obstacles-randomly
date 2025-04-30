@@ -19,7 +19,17 @@ def save_simulation(lattice, obstacles, output_it, base_output_dir, dx, dy, dpi=
     nx, ny = lattice.nx, lattice.ny
 
     for obs in obstacles:
-        type_id = {"cylinder": 1, "square": 2, "prism1": 3, "prism2": 4}[obs.type]
+        type_id = {
+            "cylinder": 1,
+            "square":   2,
+            "prism1":   3,
+            "prism2":   4,
+            "ellipse":  5,
+            "star":     6,
+            "heart":    7,
+            "hexagon":  8
+        }[obs.type]
+
         i = int((obs.pos[0] - lattice.x_min) / dx)
         j = int((obs.pos[1] - lattice.y_min) / dy)
         if 0 <= i < nx and 0 <= j < ny:

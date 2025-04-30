@@ -71,6 +71,14 @@ class random10(base_app):
             return size * math.sqrt(2) / 2
         elif shape_type in ["prism1", "prism2"]:
             return size / math.sqrt(3)
+        elif shape_type == "ellipse":
+            return size
+        elif shape_type == "star":
+            return size
+        elif shape_type == "heart":
+            return size
+        elif shape_type == "hexagon":
+            return size
         else:
             return size
 
@@ -92,7 +100,8 @@ class random10(base_app):
         Randomly pick shapes from a list of possible obstacle types
         and place them in random positions within the domain, avoiding overlap.
         """
-        possible_shapes = ["cylinder", "square", "prism1", "prism2"]
+        possible_shapes = ["cylinder", "square", "prism1", "prism2", "ellipse", "star", "heart", "hexagon"]
+
 
         max_attempts_per_obs = 100  # avoid infinite loops
 
@@ -110,6 +119,14 @@ class random10(base_app):
                     n_pts = 4
                 elif shape_type in ("prism1", "prism2"):
                     n_pts = 3
+                elif shape_type == "ellipse":
+                    n_pts = 60
+                elif shape_type == "star":
+                    n_pts = 10
+                elif shape_type == "heart":
+                    n_pts = 100
+                elif shape_type == "hexagon":
+                    n_pts = 6
                 else:
                     n_pts = 2  # fallback
 

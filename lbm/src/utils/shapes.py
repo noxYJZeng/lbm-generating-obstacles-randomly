@@ -316,6 +316,69 @@ def generate_square_pts(n_pts):
     return pts
 
 ### ************************************************
+### Generate ellipse points
+def generate_ellipse_pts(n_pts, a=1.0, b=0.5):
+    pts = np.zeros([n_pts, 2])
+    ang = 2.0 * math.pi / n_pts
+    for i in range(n_pts):
+        theta = i * ang
+        pts[i, 0] = a * math.cos(theta)
+        pts[i, 1] = b * math.sin(theta)
+    return pts
+
+
+### ************************************************
+### Generate 5-point star (pentagram) points
+def generate_star_pts(n_pts):
+    if n_pts != 10:
+        raise ValueError("Five-point star needs exactly 10 points (outer + inner)")
+
+    pts = np.zeros((n_pts, 2))
+    outer_radius = 1.0
+    inner_radius = 0.4  # 小一点，角更尖锐
+
+    for i in range(n_pts):
+        angle = i * np.pi / 5  # 36 degrees
+        radius = outer_radius if i % 2 == 0 else inner_radius
+        pts[i, 0] = radius * np.cos(angle)
+        pts[i, 1] = radius * np.sin(angle)
+
+    pts *= 0.5  # consistent scaling
+    return pts
+
+
+### ************************************************
+### Generate heart shape points
+def generate_heart_pts(n_pts):
+    pts = np.zeros([n_pts, 2])
+    theta_vals = np.linspace(0, 2 * np.pi, n_pts, endpoint=False)
+    for i, theta in enumerate(theta_vals):
+        r = 1 - np.sin(theta)
+        x = r * math.cos(theta)
+        y = r * math.sin(theta)
+        pts[i, 0] = x
+        pts[i, 1] = y
+    return pts
+
+### ************************************************
+### Generate hexagon points
+def generate_hexagon_pts(n_pts):
+    if n_pts != 6:
+        print("Hexagon shape requires n_pts = 6")
+        exit()
+
+    pts = np.zeros([n_pts, 2])
+    for i in range(n_pts):
+        angle = 2 * math.pi * i / n_pts
+        pts[i, 0] = math.cos(angle)
+        pts[i, 1] = math.sin(angle)
+    return pts
+
+
+
+### if you want to define more obstacles, start here.
+
+### ************************************************
 ### Remove duplicate points in input coordinates array
 ### WARNING : this routine is highly sub-optimal
 def remove_duplicate_pts(pts):
@@ -452,10 +515,12 @@ def generate_shape(n_pts,
                    n_sampling_pts,
                    base_output_dir):
     # Check input
-    if (shape_type not in ['cylinder','square','prism1', 'prism2','random']):
+    if (shape_type not in ['cylinder', 'square', 'prism1', 'prism2', 'random',
+                        'ellipse', 'star', 'heart', 'hexagon']):
         print('Error in shape_type')
-        print('Authorized values are "cylinder", "prism","square" and "random"')
+        print('Authorized values are "cylinder", "square", "prism1", "prism2", "random", "ellipse", "star", "heart", "hexagon"')
         exit()
+
 
     shape_folder = base_output_dir
 
@@ -490,6 +555,38 @@ def generate_shape(n_pts,
         edgy           = np.random.uniform(low=0.45, high=0.55, size=n_pts)
         ctrl_pts       = np.random.rand(n_pts,2)
         ctrl_pts[:,:] *= shape_size
+
+    if (shape_type == 'ellipse'):
+        radius         = np.ones((n_pts))
+        edgy           = np.ones((n_pts))
+        ctrl_pts       = generate_ellipse_pts(n_pts, a=1.0, b=0.5)
+        ctrl_pts[:,:] *= shape_size
+
+    if (shape_type == 'star'):
+        if n_pts != 10:
+            print("Star shape requires n_pts = 10")
+            exit()
+        radius         = np.ones((n_pts))
+        edgy           = np.ones((n_pts))
+        ctrl_pts       = generate_star_pts(n_pts)
+        ctrl_pts[:,:] *= shape_size
+
+    if (shape_type == 'heart'):
+        radius         = np.ones((n_pts))
+        edgy           = np.ones((n_pts))
+        ctrl_pts       = generate_heart_pts(n_pts)
+        ctrl_pts[:,:] *= shape_size
+
+    if (shape_type == 'hexagon'):
+        if n_pts != 6:
+            print("Hexagon shape requires n_pts = 6")
+            exit()
+        radius         = np.ones((n_pts))
+        edgy           = np.ones((n_pts))
+        ctrl_pts       = generate_hexagon_pts(n_pts)
+        ctrl_pts[:,:] *= shape_size
+
+
 
     # Initialize and build shape
     s = shape(shape_name,
