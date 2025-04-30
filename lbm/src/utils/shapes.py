@@ -7,6 +7,8 @@ import scipy.special
 import matplotlib
 import numpy             as np
 import matplotlib.pyplot as plt
+import random
+
 
 ### ************************************************
 ### Class defining shape object
@@ -515,78 +517,74 @@ def generate_shape(n_pts,
                    n_sampling_pts,
                    base_output_dir):
     # Check input
-    if (shape_type not in ['cylinder', 'square', 'prism1', 'prism2', 'random',
-                        'ellipse', 'star', 'heart', 'hexagon']):
+    if (shape_type not in ['cylinder', 'square', 'prism1', 'prism2',
+                           'random', 'ellipse', 'star', 'heart', 'hexagon']):
         print('Error in shape_type')
         print('Authorized values are "cylinder", "square", "prism1", "prism2", "random", "ellipse", "star", "heart", "hexagon"')
         exit()
 
-
     shape_folder = base_output_dir
-
 
     # Select shape type
     if (shape_type == 'cylinder'):
-        radius         = 0.5*np.ones((n_pts))
-        edgy           = 1.0*np.ones((n_pts))
-        ctrl_pts       = generate_cylinder_pts(n_pts)
-        ctrl_pts[:,:] *= shape_size
+        radius   = 0.5 * np.ones((n_pts))
+        edgy     = 1.0 * np.ones((n_pts))
+        ctrl_pts = generate_cylinder_pts(n_pts)
 
-    if (shape_type == 'square'):
-        radius         = np.zeros((n_pts))
-        edgy           = np.ones((n_pts))
-        ctrl_pts       = generate_square_pts(n_pts)
-        ctrl_pts[:,:] *= shape_size
+    elif (shape_type == 'square'):
+        radius   = np.zeros((n_pts))
+        edgy     = np.ones((n_pts))
+        ctrl_pts = generate_square_pts(n_pts)
 
-    if (shape_type == 'prism1'):
-        radius         = np.zeros((n_pts))
-        edgy           = np.ones((n_pts))
-        ctrl_pts       = generate_prism1_pts(n_pts)
-        ctrl_pts[:,:] *= shape_size
+    elif (shape_type == 'prism1'):
+        radius   = np.zeros((n_pts))
+        edgy     = np.ones((n_pts))
+        ctrl_pts = generate_prism1_pts(n_pts)
 
-    if (shape_type == 'prism2'):
-        radius         = np.zeros((n_pts))
-        edgy           = np.ones((n_pts))
-        ctrl_pts       = generate_prism2_pts(n_pts)
-        ctrl_pts[:,:] *= shape_size
+    elif (shape_type == 'prism2'):
+        radius   = np.zeros((n_pts))
+        edgy     = np.ones((n_pts))
+        ctrl_pts = generate_prism2_pts(n_pts)
 
-    if (shape_type == 'random'):
-        radius         = np.random.uniform(low=0.8, high=1.0, size=n_pts)
-        edgy           = np.random.uniform(low=0.45, high=0.55, size=n_pts)
-        ctrl_pts       = np.random.rand(n_pts,2)
-        ctrl_pts[:,:] *= shape_size
+    elif (shape_type == 'random'):
+        radius   = np.random.uniform(low=0.8, high=1.0, size=n_pts)
+        edgy     = np.random.uniform(low=0.45, high=0.55, size=n_pts)
+        ctrl_pts = np.random.rand(n_pts, 2)
 
-    if (shape_type == 'ellipse'):
-        radius         = np.ones((n_pts))
-        edgy           = np.ones((n_pts))
-        ctrl_pts       = generate_ellipse_pts(n_pts, a=1.0, b=0.5)
-        ctrl_pts[:,:] *= shape_size
+    elif (shape_type == 'ellipse'):
+        radius   = np.ones((n_pts))
+        edgy     = np.ones((n_pts))
+        ctrl_pts = generate_ellipse_pts(n_pts)
 
-    if (shape_type == 'star'):
+    elif (shape_type == 'star'):
         if n_pts != 10:
             print("Star shape requires n_pts = 10")
             exit()
-        radius         = np.ones((n_pts))
-        edgy           = np.ones((n_pts))
-        ctrl_pts       = generate_star_pts(n_pts)
-        ctrl_pts[:,:] *= shape_size
+        radius   = np.ones((n_pts))
+        edgy     = np.ones((n_pts))
+        ctrl_pts = generate_star_pts(n_pts)
 
-    if (shape_type == 'heart'):
-        radius         = np.ones((n_pts))
-        edgy           = np.ones((n_pts))
-        ctrl_pts       = generate_heart_pts(n_pts)
-        ctrl_pts[:,:] *= shape_size
+    elif (shape_type == 'heart'):
+        radius   = np.ones((n_pts))
+        edgy     = np.ones((n_pts))
+        ctrl_pts = generate_heart_pts(n_pts)
 
-    if (shape_type == 'hexagon'):
+    elif (shape_type == 'hexagon'):
         if n_pts != 6:
             print("Hexagon shape requires n_pts = 6")
             exit()
-        radius         = np.ones((n_pts))
-        edgy           = np.ones((n_pts))
-        ctrl_pts       = generate_hexagon_pts(n_pts)
-        ctrl_pts[:,:] *= shape_size
+        radius   = np.ones((n_pts))
+        edgy     = np.ones((n_pts))
+        ctrl_pts = generate_hexagon_pts(n_pts)
 
+    # Uniform scale
+    ctrl_pts *= shape_size
 
+    # 🔁 Apply random rotation (2D)
+    theta = random.uniform(0, 2 * math.pi)
+    rotation_matrix = np.array([[math.cos(theta), -math.sin(theta)],
+                                [math.sin(theta),  math.cos(theta)]])
+    ctrl_pts = ctrl_pts @ rotation_matrix.T
 
     # Initialize and build shape
     s = shape(shape_name,
@@ -599,10 +597,10 @@ def generate_shape(n_pts,
               shape_folder)
 
     s.build()
-    s.generate_image(xmin =-shape_size,
-                     xmax = shape_size,
-                     ymin =-shape_size,
-                     ymax = shape_size)
+    s.generate_image(xmin=-shape_size,
+                     xmax=shape_size,
+                     ymin=-shape_size,
+                     ymax=shape_size)
     s.write_csv()
 
     return s
