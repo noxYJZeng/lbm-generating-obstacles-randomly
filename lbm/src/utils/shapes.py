@@ -16,14 +16,15 @@ class shape:
     ### ************************************************
     ### Constructor
     def __init__(self,
-                 name,
-                 position,
-                 control_pts,
-                 n_control_pts,
-                 n_sampling_pts,
-                 radius,
-                 edgy,
-                 output_dir):
+                name,
+                position,
+                control_pts,
+                n_control_pts,
+                n_sampling_pts,
+                radius,
+                edgy,
+                output_dir,
+                rotation_angle=0.0):  # 🆕 新增角度参数
 
         self.name           = name
         self.position       = position
@@ -37,6 +38,8 @@ class shape:
         self.radius         = radius
         self.edgy           = edgy
         self.output_dir     = output_dir
+        self.rotation_angle = rotation_angle
+
 
 
     ### ************************************************
@@ -179,16 +182,18 @@ class shape:
     def write_csv(self):
         filename = os.path.join(self.output_dir, self.name + '.csv')
         with open(filename,'w') as file:
-            # Write header
-            file.write('{} {}\n'.format(self.n_control_pts,
-                                        self.n_sampling_pts))
+            # Write header including rotation angle
+            file.write('{} {} {:.6f}\n'.format(self.n_control_pts,
+                                            self.n_sampling_pts,
+                                            self.rotation_angle))
 
             # Write control points coordinates
             for i in range(0,self.n_control_pts):
                 file.write('{} {} {} {}\n'.format(self.control_pts[i,0],
-                                                  self.control_pts[i,1],
-                                                  self.radius[i],
-                                                  self.edgy[i]))
+                                                self.control_pts[i,1],
+                                                self.radius[i],
+                                                self.edgy[i]))
+
 
     ### ************************************************
     ### Read csv and initialize shape with it
@@ -580,7 +585,7 @@ def generate_shape(n_pts,
     # Uniform scale
     ctrl_pts *= shape_size
 
-    # 🔁 Apply random rotation (2D)
+    # Apply random rotation
     theta = random.uniform(0, 2 * math.pi)
     rotation_matrix = np.array([[math.cos(theta), -math.sin(theta)],
                                 [math.sin(theta),  math.cos(theta)]])
@@ -594,7 +599,8 @@ def generate_shape(n_pts,
               n_sampling_pts,
               radius,
               edgy,
-              shape_folder)
+              shape_folder,
+              rotation_angle=theta)
 
     s.build()
     s.generate_image(xmin=-shape_size,
