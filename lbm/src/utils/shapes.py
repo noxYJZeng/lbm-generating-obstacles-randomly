@@ -391,7 +391,7 @@ def generate_heart_pts(n_pts):
 def generate_hexagon_pts(n_pts):
     if n_pts != 6:
         print("Hexagon shape requires n_pts = 6")
-        exit()
+        exit() 
 
     pts = np.zeros([n_pts, 2])
     for i in range(n_pts):
