@@ -37,12 +37,7 @@ Simulation results (including .npz files and images) will be saved automatically
 
 Below are sample results showing randomly generated obstacles and flow behavior:
 
-<p align="center"> <img src="lbm/save/random10.gif" width="600" alt="Random Obstacles Simulation GIF"> </p>
-
-<p align="center"> <img src="lbm/save/random10_new.gif" width="400" alt="Random Obstacles Simulation GIF"> </p>
-
-
-
+<div align="center"> <img src="lbm/save/random10.gif" width="600" alt="Random Obstacles Simulation GIF"> <br><br> <img src="lbm/save/random10_new.gif" width="400" alt="Zoomed Random Simulation GIF"> </div> ```
 ## Credits
 
 Original base project by [jviquerat](https://github.com/jviquerat/lbm). 
