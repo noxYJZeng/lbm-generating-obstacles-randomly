@@ -133,49 +133,69 @@ class shape:
     ### ************************************************
     ### Write image
     def generate_image(self, *args, **kwargs):
+        # Optional arguments
+        plot_pts = kwargs.get('plot_pts', True)
 
-        # Handle optional argument
-        plot_pts = kwargs.get('plot_pts',  True)
-        xmin     = kwargs.get('xmin',     -1.0)
-        xmax     = kwargs.get('xmax',      1.0)
-        ymin     = kwargs.get('ymin',     -1.0)
-        ymax     = kwargs.get('ymax',      1.0)
+        # Max view size to avoid generating overly large PNGs
+        MAX_VIEW_SIZE = 2.5
+        MARGIN = 0.2  # padding around shape
+
+        # If any axis range is not provided, calculate from curve_pts
+        if 'xmin' in kwargs:
+            xmin = kwargs['xmin']
+        else:
+            xmin = max(np.min(self.curve_pts[:, 0]) - MARGIN, -MAX_VIEW_SIZE)
+        if 'xmax' in kwargs:
+            xmax = kwargs['xmax']
+        else:
+            xmax = min(np.max(self.curve_pts[:, 0]) + MARGIN, MAX_VIEW_SIZE)
+
+        if 'ymin' in kwargs:
+            ymin = kwargs['ymin']
+        else:
+            ymin = max(np.min(self.curve_pts[:, 1]) - MARGIN, -MAX_VIEW_SIZE)
+        if 'ymax' in kwargs:
+            ymax = kwargs['ymax']
+        else:
+            ymax = min(np.max(self.curve_pts[:, 1]) + MARGIN, MAX_VIEW_SIZE)
 
         # Plot shape
-        plt.xlim([xmin,xmax])
-        plt.ylim([ymin,ymax])
+        plt.xlim([xmin, xmax])
+        plt.ylim([ymin, ymax])
         plt.axis('off')
         plt.gca().set_aspect('equal', adjustable='box')
-        plt.fill([xmin,xmax,xmax,xmin],
-                 [ymin,ymin,ymax,ymax],
-                 color=(0.784,0.773,0.741),
-                 linewidth=2.5,
-                 zorder=0)
-        plt.fill(self.curve_pts[:,0],
-                 self.curve_pts[:,1],
-                 'black',
-                 linewidth=0,
-                 zorder=1)
 
-        # Plot points
-        # Each point gets a different color
-        colors = matplotlib.cm.ocean(np.linspace(0, 1,
-                                                 self.n_control_pts))
-        plt.scatter(self.control_pts[:,0],
-                    self.control_pts[:,1],
-                    color=colors,
-                    s=16,
-                    zorder=2,
-                    alpha=0.5)
+        # Background fill
+        plt.fill([xmin, xmax, xmax, xmin],
+                [ymin, ymin, ymax, ymax],
+                color=(0.784, 0.773, 0.741),
+                linewidth=2.5,
+                zorder=0)
+
+        # Shape fill
+        plt.fill(self.curve_pts[:, 0],
+                self.curve_pts[:, 1],
+                'black',
+                linewidth=0,
+                zorder=1)
+
+        # Plot control points if requested
+        if plot_pts:
+            colors = matplotlib.cm.ocean(np.linspace(0, 1, self.n_control_pts))
+            plt.scatter(self.control_pts[:, 0],
+                        self.control_pts[:, 1],
+                        color=colors,
+                        s=16,
+                        zorder=2,
+                        alpha=0.5)
 
         # Save image
         filename = os.path.join(self.output_dir, self.name + '.png')
-
-        plt.savefig(filename,
-                    dpi=200)
+        plt.savefig(filename, dpi=200)
         plt.close(plt.gcf())
         plt.cla()
         trim_white(filename)
+
 
     ### ************************************************
     ### Write csv
@@ -342,7 +362,7 @@ def generate_star_pts(n_pts):
 
     pts = np.zeros((n_pts, 2))
     outer_radius = 1.0
-    inner_radius = 0.4  # 小一点，角更尖锐
+    inner_radius = 0.4
 
     for i in range(n_pts):
         angle = i * np.pi / 5  # 36 degrees
@@ -350,8 +370,7 @@ def generate_star_pts(n_pts):
         pts[i, 0] = radius * np.cos(angle)
         pts[i, 1] = radius * np.sin(angle)
 
-    pts *= 0.5  # consistent scaling
-    return pts
+    return pts * 0.5
 
 
 ### ************************************************
@@ -360,11 +379,11 @@ def generate_heart_pts(n_pts):
     pts = np.zeros([n_pts, 2])
     theta_vals = np.linspace(0, 2 * np.pi, n_pts, endpoint=False)
     for i, theta in enumerate(theta_vals):
-        r = 1 - np.sin(theta)
-        x = r * math.cos(theta)
-        y = r * math.sin(theta)
+        x = 16 * np.sin(theta) ** 3
+        y = 13 * np.cos(theta) - 5 * np.cos(2 * theta) - 2 * np.cos(3 * theta) - np.cos(4 * theta)
         pts[i, 0] = x
         pts[i, 1] = y
+    pts *= 0.2  # scale down to similar size as other obstacles
     return pts
 
 ### ************************************************
@@ -379,7 +398,7 @@ def generate_hexagon_pts(n_pts):
         angle = 2 * math.pi * i / n_pts
         pts[i, 0] = math.cos(angle)
         pts[i, 1] = math.sin(angle)
-    return pts
+    return pts * 0.5
 
 
 
@@ -603,10 +622,10 @@ def generate_shape(n_pts,
               rotation_angle=theta)
 
     s.build()
-    s.generate_image(xmin=-shape_size,
-                     xmax=shape_size,
-                     ymin=-shape_size,
-                     ymax=shape_size)
+    # s.generate_image(xmin=-shape_size,
+    #                  xmax=shape_size,
+    #                  ymin=-shape_size,
+    #                  ymax=shape_size)
     s.write_csv()
 
     return s
