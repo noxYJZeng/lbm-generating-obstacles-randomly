@@ -8,10 +8,10 @@ While the original version supported basic flows like lid-driven cavity and Ture
 ## New Features
 
 - **New Obstacles Types**  
-  Added prism1 and prism2 as new obstacle types.
+  Added prism1, prism2, star, hexagon, heart and ellipse as new obstacle types.
 
 - **Randomized Obstacles Generation**  
-  Added `random10` `random3`application that dynamically generates random obstacles for each simulation. This enables diverse dataset creation and generalization testing.
+  Added `random10` `random3` applications that dynamically generate randomized obstacle configurations on every run. Shapes are randomly selected, placed without overlap, and optionally rotated to create a wide range of simulation setups, enabling generalization testing and diverse dataset creation.
 
 - **Automatic Output Management**  
   All simulation outputs (including `.npz` data and generated images) are automatically saved under a timestamped results folder in `./results/`. The npz files include density, velocity of the flow and lattice map of obstacles. They can be used for Latnet model training.
@@ -35,9 +35,12 @@ Simulation results (including .npz files and images) will be saved automatically
 
 ## Sample Simulation
 
-Below is a sample result showing randomly generated obstacles and flow behavior:
+Below are sample results showing randomly generated obstacles and flow behavior:
 
 <p align="center"> <img src="lbm/save/random10.gif" width="600" alt="Random Obstacles Simulation GIF"> </p>
+
+<p align="center"> <img src="lbm/save/random10_new.gif" width="400" alt="Random Obstacles Simulation GIF"> </p>
+
 
 
 ## Credits
